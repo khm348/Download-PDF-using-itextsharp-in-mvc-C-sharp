@@ -1,0 +1,40 @@
+try
+            {
+                if (model != null)
+                {
+                    HtmlDocument document = new HtmlDocument();
+                    //HtmlToPdfConverter htmlToPdfConverter = new HtmlToPdfConverter();
+                    string HTMLContent = GetPdfData(model);
+                    string createText4 = "Hello and Welcome to Get Data pdf executed" + Environment.NewLine;
+                    System.IO.File.WriteAllText(Server.MapPath("~/pres/DownloadPDF.txt"), createText4);
+                    document.LoadHtml(HTMLContent);
+                    string createText5 = "Hello and Welcome to document.LoadHtml executed" + Environment.NewLine;
+                    System.IO.File.WriteAllText(Server.MapPath("~/pres/DownloadPDF.txt"), createText5);
+                    Response.Clear();
+                    Response.ContentType = "application/pdf";
+                    Response.AddHeader("content-disposition", "attachment;filename=" + "report.pdf");
+                    Response.Cache.SetCacheability(HttpCacheability.NoCache);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        var pdf = TheArtOfDev.HtmlRenderer.PdfSharp.PdfGenerator.GeneratePdf(HTMLContent, PdfSharp.PageSize.A4);
+                        pdf.Save(ms);
+                        ms.ToArray();
+                        Response.OutputStream.Write(ms.ToArray(), 0, ms.ToArray().Length);
+                        Response.Flush();
+                        Response.End();
+                    }
+
+                    string createText3 = "Hello and Welcome to pdf executed" + Environment.NewLine;
+                    System.IO.File.WriteAllText(Server.MapPath("~/pres/DownloadPDF.txt"), createText3);
+                    //var report = new ViewAsPdf("DownloadPDFResults", model);
+                    //return report;
+                }
+            }
+
+            catch (Exception ex)
+            {
+                string createText2 = "Hello and Welcome to exception part" + Environment.NewLine;
+                System.IO.File.WriteAllText(Server.MapPath("~/pres/DownloadPDF.txt"), ex.Message);
+            }
+            return View();
+        }
